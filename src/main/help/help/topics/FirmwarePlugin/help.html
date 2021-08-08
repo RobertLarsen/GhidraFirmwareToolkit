@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <title>Help file for Firmware Plugin</title>
+        <link rel="stylesheet" type="text/css" href="../../shared/Frontpage.css">
+    </head>
+
+    <body>
+        <h1><a name="FirmwarePlugin">Firmware Plugin</a></h1>
+        <p>
+            This plugin adds tools for working with firmware images such as a filesystem
+            abstraction built upon <a href="https://github.com/ReFirmLabs/binwalk">binwalk</a>
+            and <a href="https://github.com/devttys0/sasquatch">sasquatch</a> which must both
+            be installed on your system.
+        </p>
+        <h2><a name="Configuration">Configuration</a></h2>
+        <p>
+            After having installed this plugin you should configure it which is done through
+            <tt>Edit-&gt;Tool Options-&gt;Firmware Plugin</tt>.
+        </p>
+        <img src="images/tool_options.png">
+        <h3><a name="BinwalkPath">Binwalk path</a></h3>
+        <p>
+            <a href="https://github.com/ReFirmLabs/binwalk">Binwalk</a>
+            is a tool for carving out offsets of "interesing" chunks in a file.
+        </p>
+        <p>
+            This plugin uses binwalk as a sort of filesystem where each
+            chunk is a separate file. One file type inside a firmware
+            image could be a root filesystem which can then be opened
+            and inspected.
+        </p>
+        <h3><a name="SasquatchPath">Sasquatch path</a></h3>
+        <p>
+            <a href="https://github.com/devttys0/sasquatch">Sasquatch</a>
+            is a patch for <a href="https://sourceforge.net/projects/squashfs/">SquashFS tools</a>.
+
+        </p>
+        <p>
+            SquashFS is one of the most common root filesystem types for embedded Linux systems.
+            It is well defined but many vendors have implemented their own modifications to it
+            meaning that the original tools cannot work with it.
+        </p>
+        <p>
+            Sasquatch seeks to fix this by adding many of these modifications.
+        </p>
+        <h3><a name="FirmwareStoreURL">Firmware store URL</a></h3>
+        <p>
+            Often times when having analyzed one firmware from a vendor
+            you would like to look at other versions of the same firmware
+            or firmware for similar devices. Often these can be downloaded
+            from the vendors website but this takes time. I have scraped
+            many vendors website for firmware and put them on a web server
+            for this plugin to index. This option should point to this
+            web server.
+        </p>
+    </body>
+</html>

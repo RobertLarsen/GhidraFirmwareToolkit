@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <title>Firmware Plugin Filesystems</title>
+        <link rel="stylesheet" type="text/css" href="../../shared/Frontpage.css">
+    </head>
+
+    <body>
+        <h1><a name="FirmwarePluginFilesystems">Firmware Plugin Filesystems</a></h1>
+        <p>
+            The Firmware Plugin adds a couple new filesystems for working with firmware. These will be described next.
+        </p>
+        <h2><a name="BinwalkFS">Binwalk Filesystem</a></h2>
+        <img src="images/binwalkfs.png">
+        <p>
+            Binwalk is one of the most important tools in the toolbox of a firmware analysist. Firmware usually come in
+            big blobs of bytes containing all sorts of things such as weird headers, boot loaders, operating system
+            kernels, root filesystems, configuration files and what have we.
+        </p>
+        <p>
+        Running <tt>binwalk</tt> on such a blob will tell you to some extend what it contains and at which offset. It works
+        by checking for known file signatures at each index into this blob. If something known is found, it is reported.
+        </p>
+        <p>
+        The Binwalk filesystem will run binwalk for you and report what it found as a filesystem meaning that anything found
+        can be opened directly in Ghidra. For instance a SquashFS filesystem can be opened directly from within the file system
+        browser.
+        </p>
+        <h2><a name="SquashFS">SquashFS Filesystem</a></h2>
+        <img src="images/squashfs.png">
+        <p>
+        One of the most common root filesystem types in the embedded world is the SquashFS filesystem. It is
+        standardized however many vendors make their own small changes. Sasquatch is a project that patches
+        the standard SquashFS tools to cope with many of these changes.
+        </p>
+        <p>
+        This implementation uses the Sasquatch utility to read the contents of a SquashFS filesystem.
+        </p>
+        <h1><a name="MultiFileFunctionality">Multifile Functionality</a></h1>
+        <p>
+        Ghidra is nice in that it allows you to work with multiple files in a single project.
+        </p>
+        <p>
+        For instance you will often like to import an executable and all the libraries that it depends upon,
+        however that is tedious at best.
+        </p>
+        <h2><a name="MarkingDependencies">Marking dependencies</a></h2>
+        <p>
+        Well no more, because now you can simply right click on a binary in the file system browser and choose
+        <tt>Mark dependencies</tt> and all needed libraries found in the filesystem will be marked and you can now
+        simply do a bulk import.
+        </p>
+        <img src="images/mark_dependencies.png">
+        <h2><a name="FixExternals">Set external programs</a></h2>
+        <p>
+        This is already pretty nice but it gets better. If the imported files are linked together using Ghidras
+        "External Program" functionality you can jump back and forth between function calls in one file and the
+        function implementation in another. This can be done from the project window by right clicking on the
+        topmost filesystem folder and choosing <tt>Fixup Externals</tt>.
+        </p>
+        <img src="images/fixup_externals.png">
+    </body>
+</html>

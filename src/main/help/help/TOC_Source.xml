@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<tocroot>
+    <tocref id="Ghidra Functionality">
+        <tocdef id="FirmwarePlugin" text="Firmware Plugin" target="help/topics/FirmwarePlugin/help.html">
+            <tocdef sortgroup="a" id="Configuration" text="Configuration" target="help/topics/FirmwarePlugin/help.html#Configuration">
+                <tocdef sortgroup="a" id="BinwalkPath" text="Binwalk Path" target="help/topics/FirmwarePlugin/help.html#Configuration"/>
+                <tocdef sortgroup="b" id="SasquatchPath" text="Sasquatch Path" target="help/topics/FirmwarePlugin/help.html#SasquatchPath"/>
+            </tocdef>
+            <tocdef sortgroup="b" id="FirmwarePluginFilesystems" text="Filesystems" target="help/topics/FirmwarePlugin/filesystems.html">
+                <tocdef sortgroup="a" id="BinwalkFS" text="BinwalkFS" target="help/topics/FirmwarePlugin/filesystems.html#BinwalkFS"/>
+                <tocdef sortgroup="b" id="SquashFS" text="SquashFS" target="help/topics/FirmwarePlugin/filesystems.html#SquashFS"/>
+                <tocdef sortgroup="d" id="MultiFileFunctionality" text="Multi File Functionality" target="help/topics/FirmwarePlugin/filesystems.html#MultiFileFunctionality">
+                    <tocdef sortgroup="a" id="MarkingDependencies" text="Mark dependencies" target="help/topics/FirmwarePlugin/filesystems.html#MarkingDependencies"/>
+                    <tocdef sortgroup="b" id="FixExternals" text="Set external programs" target="help/topics/FirmwarePlugin/filesystems.html#FixExternals"/>
+                </tocdef>
+            </tocdef>
+        </tocdef>
+    </tocref>
+</tocroot>
