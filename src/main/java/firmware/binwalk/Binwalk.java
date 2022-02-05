@@ -3,6 +3,7 @@ package firmware.binwalk;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -19,6 +20,26 @@ public class Binwalk {
 
     public Binwalk() throws FileNotFoundException {
         this("/usr/bin/binwalk");
+    }
+
+    private static BinwalkAnalysis fixZipArchives(BinwalkAnalysis in) {
+        BinwalkAnalysis out = new BinwalkAnalysis(in.getOwner(), in.getFirmware());
+        Iterator<BinwalkPart> ite = in.iterator();
+        while (ite.hasNext()) {
+            BinwalkPart part = ite.next();
+            if (part.getType().equals("Zip archive data")) {
+                while (ite.hasNext()) {
+                    BinwalkPart end = ite.next();
+                    if (end.getType().equals("End of Zip archive")) {
+                        out.add(part.getOffset(), end.getOffset() + end.getSize() - part.getOffset(), "Zip archive", "");
+                        break;
+                    }
+                }
+            } else {
+                out.add(part);
+            }
+        }
+        return out;
     }
 
     public BinwalkAnalysis analyze(File firmware) throws FileNotFoundException, IOException {
@@ -48,7 +69,7 @@ public class Binwalk {
             analysis.add(offset, firmware.length() - offset, type, additional);
         }
 
-        return analysis;
+        return fixZipArchives(analysis);
      }
 
     public BinwalkAnalysis analyze(String firmware) throws FileNotFoundException, IOException {

@@ -4,8 +4,8 @@ import ghidra.app.util.bin.ByteProvider;
 import ghidra.formats.gfilesystem.FSRL;
 import ghidra.formats.gfilesystem.FSRLRoot;
 import ghidra.formats.gfilesystem.FileSystemService;
-import ghidra.formats.gfilesystem.factory.GFileSystemFactoryFull;
-import ghidra.formats.gfilesystem.factory.GFileSystemProbeFull;
+import ghidra.formats.gfilesystem.factory.GFileSystemFactoryByteProvider;
+import ghidra.formats.gfilesystem.factory.GFileSystemProbeByteProvider;
 import ghidra.util.exception.CancelledException;
 import ghidra.util.task.TaskMonitor;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.io.File;
 
 import firmware.binwalk.Sasquatch;
 
-public class SquashFSFileSystemFactory implements GFileSystemFactoryFull<SquashFSFileSystem>, GFileSystemProbeFull {
+public class SquashFSFileSystemFactory implements GFileSystemFactoryByteProvider<SquashFSFileSystem>, GFileSystemProbeByteProvider {
     private Sasquatch sasquatch;
 
     public SquashFSFileSystemFactory() throws IOException {
@@ -21,16 +21,20 @@ public class SquashFSFileSystemFactory implements GFileSystemFactoryFull<SquashF
     }
 
     @Override
-    public SquashFSFileSystem create(FSRL containerFSRL, FSRLRoot targetFSRL, ByteProvider byteProvider, File containerFile, FileSystemService fsService, TaskMonitor monitor) throws IOException, CancelledException {
-        return new SquashFSFileSystem(targetFSRL, sasquatch, containerFile);
+    public SquashFSFileSystem create(FSRLRoot targetFSRL, ByteProvider byteProvider, FileSystemService fsService, TaskMonitor monitor) throws IOException, CancelledException {
+        return new SquashFSFileSystem(targetFSRL, sasquatch, Util.getAsFile(byteProvider));
     }
 
     @Override
-    public boolean probe(FSRL containerFSRL, ByteProvider byteProvider, File containerFile,
-            FileSystemService fsService, TaskMonitor monitor)
+    public boolean probe(ByteProvider byteProvider, FileSystemService fsService, TaskMonitor monitor)
         throws IOException, CancelledException {
-        monitor.setMessage("Sasquatch analyzes " + containerFile);
+        monitor.setMessage("Sasquatch analyzes " + byteProvider.getClass());
+        File f;
 
-        return sasquatch.extract(containerFile) != null;
+        if ((f = Util.getAsFile(byteProvider)) != null) {
+            return sasquatch.extract(f) != null;
+        }
+
+        return false;
     }
 }

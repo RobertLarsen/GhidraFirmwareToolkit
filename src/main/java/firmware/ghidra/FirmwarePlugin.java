@@ -1,19 +1,44 @@
 package firmware.ghidra;
 
+import docking.action.builder.ActionBuilder;
+import docking.ActionContext;
+import docking.action.DockingAction;
+import docking.widgets.tree.GTreeNode;
+import docking.widgets.tree.internal.GTreeModel;
+import generic.continues.RethrowContinuesFactory;
+import ghidra.app.events.ProgramActivatedPluginEvent;
+import ghidra.app.events.ProgramLocationPluginEvent;
 import ghidra.app.plugin.PluginCategoryNames;
 import ghidra.app.services.FileSystemBrowserService;
+import ghidra.app.util.bin.ByteArrayProvider;
+import ghidra.app.util.bin.format.elf.ElfHeader;
+import ghidra.formats.gfilesystem.FileSystemService;
+import ghidra.formats.gfilesystem.GFileSystem;
+import ghidra.formats.gfilesystem.RefdFile;
 import ghidra.framework.main.FrontEndable;
+import ghidra.framework.options.OptionsChangeListener;
 import ghidra.framework.options.ToolOptions;
 import ghidra.framework.plugintool.Plugin;
+import ghidra.framework.plugintool.PluginEvent;
 import ghidra.framework.plugintool.PluginInfo;
 import ghidra.framework.plugintool.PluginTool;
 import ghidra.framework.plugintool.util.PluginStatus;
 import ghidra.MiscellaneousPluginPackage;
+import ghidra.plugins.fsbrowser.FSBActionContext;
+import ghidra.plugins.fsbrowser.FSBFileNode;
+import ghidra.plugins.fsbrowser.FSBNode;
+import ghidra.program.model.listing.FunctionManager;
+import ghidra.program.model.listing.Program;
+import ghidra.util.exception.CancelledException;
 import ghidra.util.HelpLocation;
-import java.io.File;
+import ghidra.util.task.TaskMonitor;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -24,7 +49,8 @@ import org.apache.logging.log4j.LogManager;
     shortDescription="Help analyzing firmware",
     description="Set of tools for working with firmware images",
     servicesRequired={ FileSystemBrowserService.class },
-    servicesProvided={ FirmwareService.class }
+    servicesProvided={ FirmwareService.class },
+    eventsConsumed={ ProgramActivatedPluginEvent.class, ProgramLocationPluginEvent.class }
 )
 public class FirmwarePlugin extends Plugin implements FrontEndable, FirmwareService {
     private final static String BINWALK_PATH = "Binwalk path";
@@ -62,10 +88,78 @@ public class FirmwarePlugin extends Plugin implements FrontEndable, FirmwareServ
     }
 
     private void setupActions() {
-        tool.addAction(new MarkDependenciesAction("Mark dependencies", this));
         tool.addAction(new FixupExternalsAction("Fixup Externals", getClass().getSimpleName(), tool));
+        tool.addAction(createMarkDependenciesAction());
     }
 
+    private DockingAction createMarkDependenciesAction() {
+        return new ActionBuilder("Mark Dependencies", getName())
+            .withContext(FSBActionContext.class)
+            .enabledWhen(ac -> ac.notBusy() && ac.getFileFSRL() != null)
+            .popupMenuPath("Mark Dependencies")
+            .popupMenuGroup("G")
+            .onAction(
+                    ac -> {
+                        doMarkDependencies(ac);
+                    }
+            )
+            .build();
+    }
+
+    private String[] getDynamicLibraryNames(FSBFileNode node) {
+        try (RefdFile file = FileSystemService.getInstance().getRefdFile(node.getFSRL(), TaskMonitor.DUMMY)) {
+            GFileSystem fs =  file.fsRef.getFilesystem();
+            byte bytes[] = new byte[(int)file.file.getLength()];
+            fs.getInputStream(file.file, TaskMonitor.DUMMY).read(bytes);
+            ElfHeader elf = ElfHeader.createElfHeader(RethrowContinuesFactory.INSTANCE, new ByteArrayProvider(bytes));
+            elf.parse();
+            return elf.getDynamicLibraryNames();
+        } catch (Exception e) {
+            FirmwarePlugin.log.error(e);
+        }
+        return null;
+    }
+
+    private FSBFileNode getTreeNode(GTreeModel model, GTreeNode parent, String name) {
+        if (parent instanceof FSBFileNode && parent.toString().equals(name)) return (FSBFileNode)parent;
+        for (int i = 0; i < model.getChildCount(parent); i++) {
+            GTreeNode child = (GTreeNode)model.getChild(parent, i);
+            child = getTreeNode(model, child, name);
+            if (child != null) {
+                return (FSBFileNode) child;
+            }
+        }
+        return null;
+    }
+
+    private void doMarkDependencies(ActionContext ctx) {
+        try {
+            FSBNode[] nodes = (FSBNode[])ctx.getContextObject();
+            FSBFileNode node = (FSBFileNode)nodes[0];
+            HashMap<String, GTreeNode> deps = new HashMap<>();
+            updateDependencies(deps, node);
+            node.getTree().setSelectedNodes(deps.values());
+        } catch (CancelledException ce) {
+        }
+    }
+
+    private void updateDependencies(HashMap<String, GTreeNode> deps, FSBFileNode node) throws CancelledException {
+        if (!deps.containsKey(node.toString())) {
+            deps.put(node.toString(), node);
+            String needs[] = getDynamicLibraryNames(node);
+            if (needs != null) {
+                GTreeModel model = node.getTree().getModel();
+                GTreeNode root = (GTreeNode)model.getRoot();
+                root.loadAll(TaskMonitor.DUMMY);
+                FSBFileNode neededNode;
+                for (String needed : needs) {
+                    if ((neededNode = getTreeNode(model, root, needed)) != null) {
+                        updateDependencies(deps, neededNode);
+                    }
+                }
+            }
+        }
+    }
 
     private ToolOptions getOptions() {
         return tool.getOptions("Firmware plugin");
@@ -94,7 +188,6 @@ public class FirmwarePlugin extends Plugin implements FrontEndable, FirmwareServ
     public File getSasquatchPath() {
         return getPath(SASQUATCH_PATH);
     }
-
     private File getDefaultBinwalkPath() {
         return getDefaultProgramPath("binwalk");
     }

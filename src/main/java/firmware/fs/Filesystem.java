@@ -1,5 +1,8 @@
 package firmware.fs;
 
+import java.util.Set;
+import java.util.HashSet;
+
 public class Filesystem {
     private Directory root;
 
@@ -33,11 +36,14 @@ public class Filesystem {
     }
 
     public File resolveDeep(Symlink link) {
+        Set<File> visited = new HashSet<>();
         File result = link;
-        while (result instanceof Symlink) {
+        while (result instanceof Symlink && visited.contains(result) == false) {
+            visited.add(result);
             result = resolve((Symlink)result);
         }
-        return result;
+        /* A recursive symlink shall resolve to null */
+        return result instanceof Symlink ? null : result;
     }
 
     public File resolve(Symlink link) {

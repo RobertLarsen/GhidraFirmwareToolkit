@@ -1,5 +1,7 @@
 package firmware.ghidra;
 
+import ghidra.app.util.bin.InputStreamByteProvider;
+import ghidra.app.util.bin.ByteProvider;
 import ghidra.formats.gfilesystem.annotations.FileSystemInfo;
 import ghidra.formats.gfilesystem.GFile;
 import ghidra.formats.gfilesystem.GFileSystem;
@@ -47,6 +49,11 @@ public class BinwalkFileSystem implements GFileSystem {
     }
 
     @Override
+    public ByteProvider getByteProvider(GFile file, TaskMonitor monitor) throws IOException {
+        return Util.toByteProvider(getInputStream(file, monitor), file);
+    }
+
+    @Override
     public FSRLRoot getFSRL() {
         return root;
     }
@@ -67,11 +74,11 @@ public class BinwalkFileSystem implements GFileSystem {
 		return root.getContainer().getName();
     }
 
-    @Override
-    public String getInfo(GFile file, TaskMonitor monitor) {
-        BinwalkPart part = this.fsIndexHelper.getMetadata(file);
-		return (part == null) ? null : FSUtilities.infoMapToString(getInfoMap(part));
-    }
+    //@Override
+    //public String getInfo(GFile file, TaskMonitor monitor) {
+    //    BinwalkPart part = this.fsIndexHelper.getMetadata(file);
+	//	return (part == null) ? null : FSUtilities.infoMapToString(getInfoMap(part));
+    //}
 
     private static String humanReadableSize(long bytes) {
         long absB = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);

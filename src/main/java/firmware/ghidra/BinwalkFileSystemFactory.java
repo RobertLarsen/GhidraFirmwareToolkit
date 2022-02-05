@@ -6,8 +6,8 @@ import ghidra.app.util.bin.ByteProvider;
 import ghidra.formats.gfilesystem.FSRL;
 import ghidra.formats.gfilesystem.FSRLRoot;
 import ghidra.formats.gfilesystem.FileSystemService;
-import ghidra.formats.gfilesystem.factory.GFileSystemFactoryFull;
-import ghidra.formats.gfilesystem.factory.GFileSystemProbeFull;
+import ghidra.formats.gfilesystem.factory.GFileSystemFactoryByteProvider;
+import ghidra.formats.gfilesystem.factory.GFileSystemProbeByteProvider;
 import ghidra.util.exception.CancelledException;
 import ghidra.util.task.TaskMonitor;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import java.io.FileOutputStream;
 import firmware.binwalk.Binwalk;
 import firmware.binwalk.BinwalkAnalysis;
 
-public class BinwalkFileSystemFactory implements GFileSystemFactoryFull<BinwalkFileSystem>, GFileSystemProbeFull {
+public class BinwalkFileSystemFactory implements GFileSystemFactoryByteProvider<BinwalkFileSystem>, GFileSystemProbeByteProvider {
     public BinwalkFileSystemFactory() {
     }
 
@@ -32,18 +32,8 @@ public class BinwalkFileSystemFactory implements GFileSystemFactoryFull<BinwalkF
     }
 
     @Override
-    public BinwalkFileSystem create(FSRL containerFSRL, FSRLRoot targetFSRL, ByteProvider byteProvider, File containerFile, FileSystemService fsService, TaskMonitor monitor) throws IOException, CancelledException {
-        return new BinwalkFileSystem(targetFSRL, analyze(containerFile));
-    }
-
-    public static void log(String log) {
-        try {
-            FileOutputStream out = new FileOutputStream("/tmp/binwalkfs.log", true);
-            out.write(log.getBytes("utf-8"));
-            out.write("\n".getBytes("utf-8"));
-            out.close();
-        } catch (Exception e) {
-        }
+    public BinwalkFileSystem create(FSRLRoot targetFSRL, ByteProvider byteProvider, FileSystemService fsService, TaskMonitor monitor) throws IOException, CancelledException {
+        return new BinwalkFileSystem(targetFSRL, analyze(Util.getAsFile(byteProvider)));
     }
 
     private boolean isElf(ByteProvider provider) {
@@ -56,11 +46,20 @@ public class BinwalkFileSystemFactory implements GFileSystemFactoryFull<BinwalkF
     }
 
     @Override
-    public boolean probe(FSRL containerFSRL, ByteProvider byteProvider, File containerFile,
-            FileSystemService fsService, TaskMonitor monitor)
+    public boolean probe(ByteProvider byteProvider, FileSystemService fsService, TaskMonitor monitor)
         throws IOException, CancelledException {
-        monitor.setMessage("Binwalk analyzes " + containerFile);
+        File file;
+        monitor.setMessage("Binwalk analyzes " + byteProvider.getClass());
+        if (isElf(byteProvider) == false) {
+            if ((file = Util.getAsFile(byteProvider)) != null) {
 
-        return isElf(byteProvider) == false && analyze(containerFile).count() > 1;
+                BinwalkAnalysis a = analyze(file);
+                if (a.count() > 1 || a.get(0).getType().toUpperCase().equals("DATA") == false) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

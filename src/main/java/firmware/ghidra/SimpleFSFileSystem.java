@@ -1,5 +1,6 @@
 package firmware.ghidra;
 
+import ghidra.app.util.bin.ByteProvider;
 import ghidra.formats.gfilesystem.GFile;
 import ghidra.formats.gfilesystem.GFileSystem;
 import ghidra.formats.gfilesystem.FileSystemRefManager;
@@ -32,6 +33,11 @@ abstract class SimpleFSFileSystem implements GFileSystem {
 
         Directory fsRoot = fs.getRoot();
         populate(fsRoot, null);
+    }
+
+    @Override
+    public ByteProvider getByteProvider(GFile file, TaskMonitor monitor) throws IOException {
+        return Util.toByteProvider(getInputStream(file, monitor), file);
     }
 
     private void populate(Directory dir, GFile ghidraDir) {
@@ -71,11 +77,11 @@ abstract class SimpleFSFileSystem implements GFileSystem {
 		return root.getContainer().getName();
     }
 
-    @Override
-    public String getInfo(GFile file, TaskMonitor monitor) {
-        firmware.fs.File f = this.fsIndexHelper.getMetadata(file);
-		return (f == null) ? null : FSUtilities.infoMapToString(getInfoMap(f));
-    }
+    //@Override
+    //public String getInfo(GFile file, TaskMonitor monitor) {
+    //    firmware.fs.File f = this.fsIndexHelper.getMetadata(file);
+	//	return (f == null) ? null : FSUtilities.infoMapToString(getInfoMap(f));
+    //}
 
     private static String humanReadableSize(long bytes) {
         long absB = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);

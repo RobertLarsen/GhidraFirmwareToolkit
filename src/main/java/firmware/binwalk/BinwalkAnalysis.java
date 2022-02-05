@@ -17,12 +17,20 @@ public class BinwalkAnalysis implements Iterable<BinwalkPart> {
         this.parts = new LinkedList<>();
     }
 
+    public File getFirmware() {
+        return firmware;
+    }
+
     public Binwalk getOwner() {
         return owner;
     }
 
     public int count() {
         return parts.size();
+    }
+
+    public BinwalkPart get(int idx) {
+        return parts.get(idx);
     }
 
     byte[] read(BinwalkPart part) throws IOException {
@@ -34,11 +42,15 @@ public class BinwalkAnalysis implements Iterable<BinwalkPart> {
         return result;
     }
 
+    void add(BinwalkPart part) {
+        parts.add(part);
+    }
+
     void add(long offset, long size, String type, String additional) {
         if (type.equals("Squashfs filesystem")) {
-            parts.add(new SquashFSBinwalkPart(this, offset, size, type, additional));
+            add(new SquashFSBinwalkPart(this, offset, size, type, additional));
         } else {
-            parts.add(new BinwalkPart(this, offset, size, type, additional));
+            add(new BinwalkPart(this, offset, size, type, additional));
         }
     }
 
