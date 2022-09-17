@@ -1,0 +1,48 @@
+analyze mappings:
+
+             Start                 End         Page Offset
+    0x00007ff04efbd000  0x00007ff04efc0000  0x0000000000000000
+        /home/robert/code/Phirmwarez/build/lib.linux-x86_64-3.8/phirmwarez/analyze.cpython-38-x86_64-linux-gnu.so
+Type           Offset             VirtAddr           PhysAddr
+               FileSiz            MemSiz              Flags  Align
+LOAD           0x000000000164f000 0x00007ff04efbd000 0x0000000000000000
+               0x0000000000001000 0x0000000000003000  R      0x1000
+
+             Start                 End         Page Offset
+    0x00007ff04efc0000  0x00007ff04efc8000  0x0000000000000003
+        /home/robert/code/Phirmwarez/build/lib.linux-x86_64-3.8/phirmwarez/analyze.cpython-38-x86_64-linux-gnu.so
+Type           Offset             VirtAddr           PhysAddr
+               FileSiz            MemSiz              Flags  Align
+LOAD           0x0000000001650000 0x00007ff04efc0000 0x0000000000000000
+               0x0000000000000000 0x0000000000008000  R E    0x1000
+
+
+             Start                 End         Page Offset
+    0x00007ff04efc8000  0x00007ff04efcc000  0x000000000000000b
+        /home/robert/code/Phirmwarez/build/lib.linux-x86_64-3.8/phirmwarez/analyze.cpython-38-x86_64-linux-gnu.so
+Type           Offset             VirtAddr           PhysAddr
+               FileSiz            MemSiz              Flags  Align
+LOAD           0x0000000001650000 0x00007ff04efc8000 0x0000000000000000
+               0x0000000000000000 0x0000000000004000  R      0x1000
+
+
+
+             Start                 End         Page Offset
+    0x00007ff04efcc000  0x00007ff04efcd000  0x000000000000000e
+        /home/robert/code/Phirmwarez/build/lib.linux-x86_64-3.8/phirmwarez/analyze.cpython-38-x86_64-linux-gnu.so
+Type           Offset             VirtAddr           PhysAddr
+               FileSiz            MemSiz              Flags  Align
+LOAD           0x0000000001650000 0x00007ff04efcc000 0x0000000000000000
+               0x0000000000001000 0x0000000000001000  R      0x1000
+
+
+             Start                 End         Page Offset
+    0x00007ff04efcd000  0x00007ff04efcf000  0x000000000000000f
+        /home/robert/code/Phirmwarez/build/lib.linux-x86_64-3.8/phirmwarez/analyze.cpython-38-x86_64-linux-gnu.so
+Type           Offset             VirtAddr           PhysAddr
+               FileSiz            MemSiz              Flags  Align
+LOAD           0x0000000001651000 0x00007ff04efcd000 0x0000000000000000
+               0x0000000000002000 0x0000000000002000  RW     0x1000
+
+
+

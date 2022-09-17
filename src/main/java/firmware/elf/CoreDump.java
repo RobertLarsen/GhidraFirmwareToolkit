@@ -34,6 +34,7 @@ import ghidra.formats.gfilesystem.GFile;
 import ghidra.formats.gfilesystem.FSRL;
 import generic.continues.RethrowContinuesFactory;
 
+// https://github.com/enbarberis/core2ELF64.git
 public class CoreDump {
     private final static int PT_LOAD = 1;
     private final static int PT_NOTE = 4;
@@ -500,7 +501,7 @@ public class CoreDump {
                     e.printStackTrace();
                 }
             }
-            new FileOutputStream("/home/user/code/GhidraFirmwareToolkit/" + file.getName()).write(bytes);
+            new FileOutputStream(System.getProperty("user.home") + "/code/GhidraFirmwareToolkit/" + file.getName()).write(bytes);
         }
 
         return bytes;
@@ -556,7 +557,7 @@ public class CoreDump {
             if (f instanceof Directory) {
                 recurse(dump, (Directory)f);
             } else {
-                if (f.getName().equals("analyze.cpython-310-x86_64-linux-gnu.so"))
+                if (f.getName().equals("analyze.cpython-38-x86_64-linux-gnu.so"))
                 try {
                     dump.getBytes((Regular)f);
                 } catch (Exception e) {}
