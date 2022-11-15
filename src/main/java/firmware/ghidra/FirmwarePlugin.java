@@ -91,6 +91,7 @@ public class FirmwarePlugin extends Plugin implements ApplicationLevelPlugin, Fi
 
     private DockingAction createMarkDependenciesAction() {
         return new ActionBuilder("Mark Dependencies", getName())
+            .helpLocation(new HelpLocation(getName(), "MarkingDependencies"))
             .withContext(FSBActionContext.class)
             .enabledWhen(ac -> ac.notBusy() && ac.getFileFSRL() != null)
             .popupMenuPath("Mark Dependencies")

@@ -27,7 +27,7 @@ public class FixupExternalsAction extends FrontendProjectTreeAction {
         this.tool = tool;
         setPopupMenuData(new MenuData(new String[] { name }, "Language"));
         setEnabled(true);
-        setHelpLocation(new HelpLocation(owner, "MultiFileFunctionality"));
+        setHelpLocation(new HelpLocation(owner, "FixExternals"));
     }
 
     @Override
