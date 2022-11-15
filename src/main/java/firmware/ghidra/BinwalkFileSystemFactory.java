@@ -53,7 +53,7 @@ public class BinwalkFileSystemFactory implements GFileSystemFactoryByteProvider<
             if ((file = Util.getAsFile(byteProvider)) != null) {
 
                 BinwalkAnalysis a = analyze(file);
-                if (a.count() > 1 || a.get(0).getType().toUpperCase().equals("DATA") == false) {
+                if (a.count() > 1 || (a.count() > 0 && a.get(0).getType().toUpperCase().equals("DATA") == false)) {
                     return true;
                 }
             }
