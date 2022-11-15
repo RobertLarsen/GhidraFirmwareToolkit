@@ -31,11 +31,9 @@ public class ExecutableWrapper {
     }
 
     public String[] execute(String ... args) throws IOException {
-        String total;
         String cmd[] = new String[args.length + 1];
-        cmd[0] = total = executable.getPath();
+        cmd[0] = executable.getPath();
         for (int i = 0; i < args.length; i++) {
-            total += " " + args[i];
             cmd[i + 1] = args[i];
         }
         Process p = Runtime.getRuntime().exec(cmd);

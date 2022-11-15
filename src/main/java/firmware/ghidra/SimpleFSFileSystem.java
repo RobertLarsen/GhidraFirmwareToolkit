@@ -6,16 +6,10 @@ import ghidra.formats.gfilesystem.GFileSystem;
 import ghidra.formats.gfilesystem.FileSystemRefManager;
 import ghidra.formats.gfilesystem.FSRLRoot;
 import ghidra.formats.gfilesystem.FileSystemIndexHelper;
-import ghidra.formats.gfilesystem.FSUtilities;
 import ghidra.util.task.TaskMonitor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
-import java.util.LinkedHashMap;
-import java.text.CharacterIterator;
-import java.text.StringCharacterIterator;
-import java.text.DateFormat;
 
 import firmware.fs.*;
 
@@ -75,49 +69,6 @@ abstract class SimpleFSFileSystem implements GFileSystem {
     @Override
     public String getName() {
 		return root.getContainer().getName();
-    }
-
-    //@Override
-    //public String getInfo(GFile file, TaskMonitor monitor) {
-    //    firmware.fs.File f = this.fsIndexHelper.getMetadata(file);
-	//	return (f == null) ? null : FSUtilities.infoMapToString(getInfoMap(f));
-    //}
-
-    private static String humanReadableSize(long bytes) {
-        long absB = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);
-        if (absB < 1024) {
-            return bytes + " B";
-        }
-        long value = absB;
-        CharacterIterator ci = new StringCharacterIterator("KMGTPE");
-        for (int i = 40; i >= 0 && absB > 0xfffccccccccccccL >> i; i -= 10) {
-            value >>= 10;
-            ci.next();
-        }
-        value *= Long.signum(bytes);
-        return String.format("%.1f %ciB", value / 1024.0, ci.current());
-    }
-
-    private static Map<String, String> getInfoMap(firmware.fs.File f) {
-        Map<String, String> info = new LinkedHashMap<>();
-        info.put("Name", f.getName());
-        info.put("Type", f.getClass().getSimpleName());
-        info.put("Mode", f.getMode().toString());
-        info.put("Owner", f.getUser());
-        info.put("Group", f.getGroup());
-        info.put("Last modified", DateFormat.getInstance().format(f.getModified().getTime()));
-        if (f instanceof Regular) {
-            info.put("Size", humanReadableSize(((Regular)f).getSize()));
-        } else if (f instanceof Symlink) {
-            info.put("Link", ((Symlink)f).getLink());
-            File deep = ((Symlink)f).resolveDeep();
-            info.put("Pointee", deep == null ? "<null>" : deep.getAbsolutePath());
-        } else if (f instanceof Device) {
-            info.put("Major", Integer.toString(((Device)f).getMajor()));
-            info.put("Minor", Integer.toString(((Device)f).getMinor()));
-        }
-
-        return info;
     }
 
     @Override

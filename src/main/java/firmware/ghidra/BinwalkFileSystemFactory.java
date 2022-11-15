@@ -2,7 +2,6 @@ package firmware.ghidra;
 
 import ghidra.app.util.bin.format.elf.ElfHeader;
 import ghidra.app.util.bin.ByteProvider;
-import ghidra.formats.gfilesystem.FSRL;
 import ghidra.formats.gfilesystem.FSRLRoot;
 import ghidra.formats.gfilesystem.FileSystemService;
 import ghidra.formats.gfilesystem.factory.GFileSystemFactoryByteProvider;
@@ -11,7 +10,6 @@ import ghidra.util.exception.CancelledException;
 import ghidra.util.task.TaskMonitor;
 import java.io.IOException;
 import java.io.File;
-import java.io.FileOutputStream;
 
 import firmware.binwalk.Binwalk;
 import firmware.binwalk.BinwalkAnalysis;

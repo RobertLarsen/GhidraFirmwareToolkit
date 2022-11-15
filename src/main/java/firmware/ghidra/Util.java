@@ -7,7 +7,6 @@ import ghidra.app.util.bin.FileByteProvider;
 import ghidra.app.util.bin.ObfuscatedFileByteProvider;
 import ghidra.app.util.bin.FileBytesProvider;
 import ghidra.formats.gfilesystem.RefdByteProvider;
-import ghidra.formats.gfilesystem.FSRL;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.File;

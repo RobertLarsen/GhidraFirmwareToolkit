@@ -1,7 +1,6 @@
 package firmware.ghidra;
 
 import ghidra.app.util.bin.ByteProvider;
-import ghidra.formats.gfilesystem.FSRL;
 import ghidra.formats.gfilesystem.FSRLRoot;
 import ghidra.formats.gfilesystem.FileSystemService;
 import ghidra.formats.gfilesystem.factory.GFileSystemFactoryByteProvider;
