@@ -4,7 +4,6 @@ import docking.ActionContext;
 import docking.action.MenuData;
 import docking.widgets.tree.GTreeNode;
 import docking.widgets.tree.internal.GTreeModel;
-import generic.continues.RethrowContinuesFactory;
 import ghidra.app.util.bin.ByteArrayProvider;
 import ghidra.app.util.bin.format.elf.ElfHeader;
 import ghidra.formats.gfilesystem.FileSystemService;
@@ -67,7 +66,7 @@ public class MarkDependenciesAction extends FSBAction {
             GFileSystem fs =  file.fsRef.getFilesystem();
             byte bytes[] = new byte[(int)file.file.getLength()];
             fs.getInputStream(file.file, TaskMonitor.DUMMY).read(bytes);
-            ElfHeader elf = ElfHeader.createElfHeader(RethrowContinuesFactory.INSTANCE, new ByteArrayProvider(bytes));
+            ElfHeader elf = new ElfHeader(new ByteArrayProvider(bytes), null);
             elf.parse();
             return elf.getDynamicLibraryNames();
         } catch (Exception e) {

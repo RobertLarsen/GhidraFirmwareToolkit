@@ -25,8 +25,7 @@ import firmware.binwalk.BinwalkPart;
 
 @FileSystemInfo(type = "binwalkfs", // ([a-z0-9]+ only)
 		description = "Binwalk",
-        factory = BinwalkFileSystemFactory.class,
-        priority = FileSystemInfo.PRIORITY_LOWEST)
+        factory = BinwalkFileSystemFactory.class)
 public class BinwalkFileSystem implements GFileSystem {
 	private FileSystemRefManager refManager;
     private FSRLRoot root;

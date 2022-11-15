@@ -1,6 +1,5 @@
 package firmware.ghidra;
 
-import generic.continues.RethrowContinuesFactory;
 import ghidra.app.util.bin.format.elf.ElfHeader;
 import ghidra.app.util.bin.ByteProvider;
 import ghidra.formats.gfilesystem.FSRL;
@@ -24,10 +23,10 @@ public class BinwalkFileSystemFactory implements GFileSystemFactoryByteProvider<
     private BinwalkAnalysis analyze(File container) throws IOException {
         BinwalkAnalysis analysis = null;
         FirmwarePlugin plugin = FirmwarePlugin.getInstance();
-        if (plugin != null) {
+        //if (plugin != null) {
             Binwalk binwalk = new Binwalk(plugin.getBinwalkPath());
             analysis = binwalk.analyze(container);
-        }
+        //}
         return analysis;
     }
 
@@ -38,7 +37,7 @@ public class BinwalkFileSystemFactory implements GFileSystemFactoryByteProvider<
 
     private boolean isElf(ByteProvider provider) {
         try {
-            ElfHeader.createElfHeader(RethrowContinuesFactory.INSTANCE, provider);
+            new ElfHeader(provider, null);
             return true;
         } catch (Exception e) {
         }

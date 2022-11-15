@@ -14,8 +14,7 @@ import firmware.binwalk.Sasquatch;
 
 @FileSystemInfo(type = "squashfs", // ([a-z0-9]+ only)
 		description = "SquashFS",
-        factory = SquashFSFileSystemFactory.class,
-        priority = FileSystemInfo.PRIORITY_LOW)
+        factory = SquashFSFileSystemFactory.class)
 public class SquashFSFileSystem extends SimpleFSFileSystem {
     private Sasquatch sasquatch;
     private File container;

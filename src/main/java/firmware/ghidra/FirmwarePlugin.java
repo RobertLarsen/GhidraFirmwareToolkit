@@ -5,7 +5,6 @@ import docking.ActionContext;
 import docking.action.DockingAction;
 import docking.widgets.tree.GTreeNode;
 import docking.widgets.tree.internal.GTreeModel;
-import generic.continues.RethrowContinuesFactory;
 import ghidra.app.events.ProgramActivatedPluginEvent;
 import ghidra.app.events.ProgramLocationPluginEvent;
 import ghidra.app.plugin.PluginCategoryNames;
@@ -15,7 +14,7 @@ import ghidra.app.util.bin.format.elf.ElfHeader;
 import ghidra.formats.gfilesystem.FileSystemService;
 import ghidra.formats.gfilesystem.GFileSystem;
 import ghidra.formats.gfilesystem.RefdFile;
-import ghidra.framework.main.FrontEndable;
+import ghidra.framework.main.ApplicationLevelPlugin;
 import ghidra.framework.options.OptionsChangeListener;
 import ghidra.framework.options.ToolOptions;
 import ghidra.framework.plugintool.Plugin;
@@ -36,8 +35,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -52,7 +49,7 @@ import org.apache.logging.log4j.LogManager;
     servicesProvided={ FirmwareService.class },
     eventsConsumed={ ProgramActivatedPluginEvent.class, ProgramLocationPluginEvent.class }
 )
-public class FirmwarePlugin extends Plugin implements FrontEndable, FirmwareService {
+public class FirmwarePlugin extends Plugin implements ApplicationLevelPlugin, FirmwareService {
     private final static String BINWALK_PATH = "Binwalk path";
     private final static String SASQUATCH_PATH = "Sasquatch path";
 
@@ -111,7 +108,7 @@ public class FirmwarePlugin extends Plugin implements FrontEndable, FirmwareServ
             GFileSystem fs =  file.fsRef.getFilesystem();
             byte bytes[] = new byte[(int)file.file.getLength()];
             fs.getInputStream(file.file, TaskMonitor.DUMMY).read(bytes);
-            ElfHeader elf = ElfHeader.createElfHeader(RethrowContinuesFactory.INSTANCE, new ByteArrayProvider(bytes));
+            ElfHeader elf = new ElfHeader(new ByteArrayProvider(bytes), null);
             elf.parse();
             return elf.getDynamicLibraryNames();
         } catch (Exception e) {
