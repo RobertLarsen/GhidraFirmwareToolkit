@@ -2,6 +2,7 @@ package firmware.ghidra;
 
 import docking.action.MenuData;
 import ghidra.app.util.importer.MessageLog;
+import ghidra.app.util.opinion.Loaded;
 import ghidra.framework.main.datatable.FrontendProjectTreeAction;
 import ghidra.framework.main.datatable.ProjectDataContext;
 import ghidra.framework.model.DomainFile;
@@ -10,7 +11,7 @@ import ghidra.framework.model.DomainObject;
 import ghidra.program.model.listing.Library;
 import ghidra.program.model.listing.Program;
 import ghidra.program.model.symbol.ExternalManager;
-import ghidra.program.util.ELFExternalSymbolResolver;
+import ghidra.program.util.ExternalSymbolResolver;
 import ghidra.util.exception.InvalidInputException;
 import ghidra.util.Msg;
 import ghidra.util.task.TaskMonitor;
@@ -52,7 +53,9 @@ public class FixupExternalsAction extends FrontendProjectTreeAction {
             Program program = (Program)file.getDomainObject(this, true, true, TaskMonitor.DUMMY);
             count += fixupExternals(file, program, allFiles);
             MessageLog log = new MessageLog();
-            ELFExternalSymbolResolver.fixUnresolvedExternalSymbols(program, false, log, TaskMonitor.DUMMY);
+            List<Loaded<Program>> programs = new LinkedList<>();
+            programs.add(new Loaded<>(program, program.getName(), program.getDomainFile().getParent().getPathname()));
+            ExternalSymbolResolver.fixUnresolvedExternalSymbols(programs, false, log, TaskMonitor.DUMMY);
             program.save("Updated Externals", TaskMonitor.DUMMY);
             program.release(this);
         } catch (Exception e) {
