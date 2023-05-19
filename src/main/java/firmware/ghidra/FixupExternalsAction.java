@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import ghidra.util.HelpLocation;
 import ghidra.framework.plugintool.PluginTool;
+import ghidra.app.plugin.core.analysis.ExternalSymbolResolverAnalyzer;
 
 public class FixupExternalsAction extends FrontendProjectTreeAction {
     private PluginTool tool;
@@ -52,10 +53,11 @@ public class FixupExternalsAction extends FrontendProjectTreeAction {
         try {
             Program program = (Program)file.getDomainObject(this, true, true, TaskMonitor.DUMMY);
             count += fixupExternals(file, program, allFiles);
+            ExternalSymbolResolverAnalyzer analyzer = new ExternalSymbolResolverAnalyzer();
             MessageLog log = new MessageLog();
-            List<Loaded<Program>> programs = new LinkedList<>();
-            programs.add(new Loaded<>(program, program.getName(), program.getDomainFile().getParent().getPathname()));
-            ExternalSymbolResolver.fixUnresolvedExternalSymbols(programs, false, log, TaskMonitor.DUMMY);
+            if (analyzer.canAnalyze(program)) {
+                analyzer.added(program, null, TaskMonitor.DUMMY, log);
+            }
             program.save("Updated Externals", TaskMonitor.DUMMY);
             program.release(this);
         } catch (Exception e) {
