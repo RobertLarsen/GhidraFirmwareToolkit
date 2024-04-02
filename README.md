@@ -3,6 +3,8 @@
 This project is a [Ghidra](https://ghidra-sre.org/) extension adding filesystems, filesystem functionality
 and multifile functionality which I find useful when working with firmware images.
 
+Look here for a demo: https://www.youtube.com/watch?v=-rjoMC27gaU
+
 ## Build
 
 Build this with a recent version of [Gradle](https://gradle.org/) having set the
