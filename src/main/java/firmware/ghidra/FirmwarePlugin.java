@@ -38,7 +38,7 @@ import org.apache.logging.log4j.LogManager;
 @PluginInfo(
     status=PluginStatus.RELEASED,
     packageName=MiscellaneousPluginPackage.NAME,
-    category=PluginCategoryNames.SUPPORT,
+    category=PluginCategoryNames.PROGRAM_ORGANIZATION,
     shortDescription="Help analyzing firmware",
     description="Set of tools for working with firmware images",
     servicesRequired={ FileSystemBrowserService.class },
