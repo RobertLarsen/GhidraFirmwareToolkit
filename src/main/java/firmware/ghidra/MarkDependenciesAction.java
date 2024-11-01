@@ -1,6 +1,9 @@
 package firmware.ghidra;
 
-import docking.ActionContext;
+import docking.action.DockingAction;
+import docking.action.builder.ActionBuilder;
+import ghidra.plugins.fsbrowser.FSBActionContext;
+
 import docking.action.MenuData;
 import docking.widgets.tree.GTreeNode;
 import docking.widgets.tree.internal.GTreeModel;
@@ -10,37 +13,42 @@ import ghidra.formats.gfilesystem.FileSystemService;
 import ghidra.formats.gfilesystem.GFileSystem;
 import ghidra.formats.gfilesystem.RefdFile;
 import ghidra.framework.plugintool.Plugin;
-import ghidra.plugins.fsbrowser.FSBAction;
-import ghidra.plugins.fsbrowser.FSBActionContext;
+import ghidra.plugins.fsbrowser.FSBFileHandler;
+import ghidra.plugins.fsbrowser.FSBFileHandlerContext;
 import ghidra.plugins.fsbrowser.FSBFileNode;
 import ghidra.util.exception.CancelledException;
 import ghidra.util.task.TaskMonitor;
 import ghidra.util.HelpLocation;
 
 import java.util.HashMap;
+import java.util.List;
 
-public class MarkDependenciesAction extends FSBAction {
-    public MarkDependenciesAction(String actionName, Plugin plugin) {
-        super(actionName, plugin);
-        setEnabled(true);
-        setHelpLocation(new HelpLocation(plugin.getClass().getSimpleName(), "MultiFileFunctionality"));
-        setPopupMenuData(new MenuData(new String[] { actionName }, null, "I"));
+public class MarkDependenciesAction implements FSBFileHandler {
+    private FSBFileHandlerContext context;
+
+    @Override
+    public void init(FSBFileHandlerContext context) {
+        this.context = context;
     }
 
     @Override
-    public void actionPerformed(ActionContext ctx) {
-        try {
-            FSBFileNode node = (FSBFileNode)ctx.getContextObject();
-            HashMap<String, GTreeNode> deps = new HashMap<>();
-            updateDependencies(deps, node);
-            node.getTree().setSelectedNodes(deps.values());
-        } catch (CancelledException ce) {
-        }
-    }
-
-    @Override
-    public boolean isEnabledForContext(ActionContext ctx) {
-        return ctx instanceof FSBActionContext && ctx.getContextObject() instanceof FSBFileNode;
+    public List<DockingAction> createActions() {
+        return List.of(new ActionBuilder("Mark Dependencies", context.plugin().getName())
+                .withContext(FSBActionContext.class)
+                .enabledWhen(ac -> ac.notBusy() && ac.getSelectedCount() == 1)
+                .popupMenuPath("Mark Dependencies")
+                .popupMenuGroup("F", "B")
+                .helpLocation(new HelpLocation(context.plugin().getClass().getSimpleName(), "MultiFileFunctionality"))
+                .onAction(ctx -> {
+                    try {
+                        FSBFileNode node = (FSBFileNode)ctx.getContextObject();
+                        HashMap<String, GTreeNode> deps = new HashMap<>();
+                        updateDependencies(deps, node);
+                        node.getTree().setSelectedNodes(deps.values());
+                    } catch (CancelledException ce) {
+                    }
+                })
+                .build());
     }
 
     private void updateDependencies(HashMap<String, GTreeNode> deps, FSBFileNode node) throws CancelledException {

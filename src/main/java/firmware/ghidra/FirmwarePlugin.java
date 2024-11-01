@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -128,8 +129,8 @@ public class FirmwarePlugin extends Plugin implements ApplicationLevelPlugin, Fi
 
     private void doMarkDependencies(ActionContext ctx) {
         try {
-            FSBNode[] nodes = (FSBNode[])ctx.getContextObject();
-            FSBFileNode node = (FSBFileNode)nodes[0];
+            List<FSBNode> nodes = (List<FSBNode>)ctx.getContextObject();
+            FSBFileNode node = (FSBFileNode)nodes.get(0);
             HashMap<String, GTreeNode> deps = new HashMap<>();
             updateDependencies(deps, node);
             node.getTree().setSelectedNodes(deps.values());
