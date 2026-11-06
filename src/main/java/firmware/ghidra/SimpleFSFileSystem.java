@@ -19,7 +19,7 @@ abstract class SimpleFSFileSystem implements GFileSystem {
     private FileSystemIndexHelper<firmware.fs.File> fsIndexHelper;
     private Filesystem fs;
 
-    protected SimpleFSFileSystem(FSRLRoot root, Filesystem fs) {
+    protected SimpleFSFileSystem(FSRLRoot root, Filesystem fs) throws IOException {
         this.root = root;
         this.fs = fs;
         this.fsIndexHelper = new FileSystemIndexHelper<>(this, root);
@@ -34,7 +34,7 @@ abstract class SimpleFSFileSystem implements GFileSystem {
         return Util.toByteProvider(getInputStream(file, monitor), file);
     }
 
-    private void populate(Directory dir, GFile ghidraDir) {
+    private void populate(Directory dir, GFile ghidraDir) throws IOException {
         GFile created;
         for (firmware.fs.File child : dir) {
             if (ghidraDir == null) {

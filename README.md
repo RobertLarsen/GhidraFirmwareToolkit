@@ -7,9 +7,20 @@ Look here for a demo: https://youtu.be/Elr3vf4dOew
 
 ## Build
 
-Build this with a recent version of [Gradle](https://gradle.org/) having set the
-`$GHIDRA_INSTALL_DIR` environment variable to point to your Ghidra installation. You will
-find the result in the `dist` directory.
+Build this with a version of [Gradle](https://gradle.org/) supported by your Ghidra
+installation (see `Ghidra/application.properties`). Set `GHIDRA_INSTALL_DIR` to the
+installation directory and `JAVA_HOME` to a JDK meeting Ghidra's
+`application.java.min` requirement (JDK 25 for Ghidra 12.2):
+
+```sh
+export GHIDRA_INSTALL_DIR=/path/to/ghidra
+export JAVA_HOME=/path/to/jdk-25
+gradle buildExtension
+```
+
+Check `gradle --version` to confirm that Gradle's JVM is the intended JDK; the
+version reported by `javac -version` alone does not determine which JDK Gradle
+uses. You will find the resulting extension in the `dist` directory.
 
 ## Install
 

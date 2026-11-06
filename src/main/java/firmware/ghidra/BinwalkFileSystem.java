@@ -25,7 +25,7 @@ public class BinwalkFileSystem implements GFileSystem {
     private FSRLRoot root;
     private FileSystemIndexHelper<BinwalkPart> fsIndexHelper;
 
-    public BinwalkFileSystem(FSRLRoot root, BinwalkAnalysis analysis) {
+    public BinwalkFileSystem(FSRLRoot root, BinwalkAnalysis analysis) throws IOException {
         this.refManager = new FileSystemRefManager(this);
         this.root = root;
 		this.fsIndexHelper = new FileSystemIndexHelper<>(this, root);
